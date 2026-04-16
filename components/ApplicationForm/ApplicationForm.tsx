@@ -39,7 +39,7 @@ export default function ApplicationForm() {
 
   const methods = useForm<ApplicationFormData>({
     resolver: zodResolver(ApplicationFormSchema),
-    mode: "onChange",
+    mode: "onBlur", // Berpindah ke onBlur agar lebih performan
     defaultValues: {
       personalData: { gender: "Laki-laki/Male", status: "Single" },
       familyData: { siblings: [], children: [] },
@@ -78,52 +78,62 @@ export default function ApplicationForm() {
     const today = new Date().toISOString().split('T')[0];
     const dummy: ApplicationFormData = {
       personalData: {
-        appliedPosition: "Senior Tech Lead", vacancySource: "Internal", fullName: "Ahmad Suhairi",
-        gender: "Laki-laki/Male", nickname: "Suhairi", bloodType: "AB", placeOfBirth: "Jakarta",
-        dateOfBirth: "1992-04-16", religion: "Islam", ktpNo: "3210001604920001",
-        ktpValidUntil: "Lifetime", email: "suhairi@example.com", mobilePhone: "081233445566",
-        currentAddress: "Jakarta Selatan", ktpAddress: "Jakarta Selatan", status: "Single",
+        appliedPosition: "Expert Next.js Developer", vacancySource: "Direct", fullName: "Test Candidate",
+        gender: "Laki-laki/Male", nickname: "Tester", bloodType: "B", placeOfBirth: "Jakarta",
+        dateOfBirth: "1990-01-01", religion: "Islam", ktpNo: "1234567890123456",
+        ktpValidUntil: "2030-01-01", email: "test@example.com", mobilePhone: "08123456789",
+        currentAddress: "Jakarta", ktpAddress: "Jakarta", status: "Single",
       },
       familyData: {
-        father: { name: "Bapak Suhairi", placeDateOfBirth: "Jakarta, 1960", occupation: "Retired" },
-        mother: { name: "Ibu Suhairi", placeDateOfBirth: "Jakarta, 1965", occupation: "Housewife" },
+        father: { name: "Father Name", placeDateOfBirth: "Jakarta, 1960", occupation: "Retired" },
+        mother: { name: "Mother Name", placeDateOfBirth: "Jakarta, 1965", occupation: "Housewife" },
         siblings: [], children: []
       },
       education: {
-        sd: { institution: "SDN 01", major: "General", graduationYear: "2004", gpa: "N/A" },
-        sltp: { institution: "SMPN 01", major: "General", graduationYear: "2007", gpa: "N/A" },
-        slta: { institution: "SMAN 01", major: "IPA", graduationYear: "2010", gpa: "N/A" },
+        sd: { institution: "SD 01", major: "General", graduationYear: "2000", gpa: "3.0" },
+        sltp: { institution: "SMP 01", major: "General", graduationYear: "2003", gpa: "3.0" },
+        slta: { institution: "SMA 01", major: "IPA", graduationYear: "2006", gpa: "3.0" },
       },
       courses: [], languages: [],
       employmentHistory: Array(3).fill({ 
-        companyName: "Google", jobTitle: "SDE", salary: "30M", officePhone: "021", 
-        startWorking: "2014", resigned: "2024", reasonForResignation: "New Opportunity",
-        jobDesc: "Built cool things", businessType: "IT", supervisorName: "Sundar", 
-        supervisorTitle: "CEO", reportingCount: "10" 
+        companyName: "Company", jobTitle: "Dev", salary: "10M", officePhone: "021", 
+        startWorking: "2010", resigned: "2020", reasonForResignation: "Resign",
+        jobDesc: "Dev", businessType: "IT", supervisorName: "Boss", 
+        supervisorTitle: "CEO", reportingCount: "0" 
       }),
       socialActivities: [],
       references: [
-        { name: "John Wick", relationship: "Former Boss", jobTitle: "Director", companyName: "Continental", mobilePhone: "0811" }
+        { name: "Reference 1", relationship: "Manager", jobTitle: "Lead", companyName: "Co", mobilePhone: "0811" }
       ],
       emergencyContacts: [
-        { name: "Emergency Bro", relationship: "Brother", mobilePhone: "0811" },
-        { name: "Emergency Sis", relationship: "Sister", mobilePhone: "0822" }
+        { name: "Emergency 1", relationship: "Brother", mobilePhone: "0811" },
+        { name: "Emergency 2", relationship: "Sister", mobilePhone: "0822" }
       ],
-      finalSection: { expectedSalary: "30.000.000", availability: "Immediately", expectedJoinDate: today, declaration: true }
+      finalSection: { 
+        expectedSalary: "15.000.000", 
+        availability: "Immediately", 
+        expectedJoinDate: today, 
+        declaration: true 
+      }
     };
     reset(dummy);
-    setShowErrorSummary(false);
+    console.log("DEBUG: Dummy data loaded:", dummy);
   };
 
   const next = async () => {
     const fields = STEPS[currentStep].fields as any;
+    console.log(`DEBUG: Validating Step ${currentStep} fields:`, fields);
     const isValid = await trigger(fields, { shouldFocus: true });
+    
     if (!isValid) {
+      console.warn("DEBUG: Validation failed for step", currentStep, errors);
       setShowErrorSummary(true);
       const firstError = document.querySelector('[aria-invalid="true"]');
       if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+    
+    console.log("DEBUG: Step valid, moving to next.");
     setShowErrorSummary(false);
     if (currentStep < STEPS.length - 1) {
       setCurrentStep((s) => s + 1);
@@ -132,6 +142,7 @@ export default function ApplicationForm() {
   };
 
   const onSubmit = async (data: ApplicationFormData) => {
+    console.log("DEBUG: Submitting final payload:", data);
     try {
       const response = await fetch("/api/applications", {
         method: "POST",
@@ -139,30 +150,35 @@ export default function ApplicationForm() {
         body: JSON.stringify(data),
       });
 
+      console.log("DEBUG: Server response status:", response.status);
+      const responseData = await response.json();
+      console.log("DEBUG: Server response body:", responseData);
+
       if (response.ok) {
-        alert("Application Submitted Successfully!");
+        alert("SUCCESS: Application Submitted!");
         window.location.href = "/dashboard";
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to submit");
+        throw new Error(responseData.error || "Failed to submit application");
       }
     } catch (error: any) {
-      alert(`Error: ${error.message}`);
+      console.error("DEBUG: Submission error:", error);
+      alert(`SUBMISSION FAILED: ${error.message}`);
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 bg-white min-h-screen">
+      {/* Header UI tetap sama... */}
       <div className="mb-12 sticky top-0 bg-white/80 backdrop-blur-md z-20 py-4 border-b border-slate-100">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight text-center sm:text-left">Application Form</h1>
-            <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest text-center sm:text-left">
+            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight uppercase italic">Application Form</h1>
+            <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest uppercase">
               Step {currentStep + 1} of {STEPS.length}: {STEPS[currentStep].title}
             </p>
           </div>
           <div className="flex items-center justify-center gap-4">
-            <button type="button" onClick={fillDummyData} className="px-3 py-1.5 bg-slate-50 text-slate-500 border border-slate-200 rounded-md text-[10px] font-bold uppercase hover:bg-slate-100 transition-all">
+            <button type="button" onClick={fillDummyData} className="px-3 py-1.5 bg-slate-50 text-slate-500 border border-slate-200 rounded-md text-[10px] font-bold uppercase hover:bg-slate-100 transition-all shadow-sm">
               Fill Dummy
             </button>
             <div className="flex gap-1">
@@ -192,8 +208,8 @@ export default function ApplicationForm() {
           </div>
 
           {showErrorSummary && (
-            <div className="p-6 bg-red-50 border border-red-100 rounded-2xl">
-              <h4 className="text-sm font-bold text-red-800 uppercase tracking-tight mb-3">Please fix errors:</h4>
+            <div className="p-6 bg-red-50 border border-red-100 rounded-2xl animate-in zoom-in duration-300 shadow-sm">
+              <h4 className="text-sm font-bold text-red-800 uppercase tracking-tight mb-3 italic">Validation Errors (Check Console):</h4>
               <ul className="text-xs text-red-700 space-y-1 list-disc list-inside">
                 {getStepErrors().map((msg, i) => <li key={i}>{msg}</li>)}
               </ul>
@@ -210,7 +226,7 @@ export default function ApplicationForm() {
               disabled={isSubmitting}
               className="px-8 py-2.5 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all text-sm font-medium disabled:opacity-50"
             >
-              {isSubmitting ? "Processing..." : currentStep < STEPS.length - 1 ? "Continue" : "Finalize & Submit"}
+              {isSubmitting ? "Submitting..." : currentStep < STEPS.length - 1 ? "Continue" : "Finalize & Submit"}
             </button>
           </div>
         </form>

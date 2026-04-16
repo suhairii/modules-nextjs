@@ -1,13 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+// Prisma 7 requires explicit connection URL in the constructor 
+// if it's not defined in the .prisma file
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    datasourceUrl: "file:./dev.db",
+  });
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: ["query"],
-  });
+declare global {
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;

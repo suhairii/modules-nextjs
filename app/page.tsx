@@ -1,30 +1,30 @@
-"use client";
-
 import ApplicationForm from "@/components/ApplicationForm/ApplicationForm";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
-  const handleSubmit = (data: any) => {
-    console.log("Form Submitted:", data);
-    alert("Check console for submitted data!");
-  };
-
   return (
-    <main className="min-h-screen p-8 md:p-24 bg-zinc-100">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-slate-900">
-            Job Application
+    <main className="min-h-screen p-4 sm:p-8 md:p-24 bg-slate-50">
+      <div className="max-w-4xl mx-auto space-y-12">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl uppercase italic">
+            Job Application Form
           </h1>
-          <p className="text-slate-500 text-lg">Please fill out the form below to apply for a position.</p>
+          <p className="text-slate-500 text-lg">
+            Join our team by completing the comprehensive application below.
+          </p>
         </div>
         
-        <ApplicationForm onSubmit={handleSubmit} />
+        <ApplicationForm />
         
-        <div className="text-center mt-8">
-          <a href="/candidates" className="text-slate-600 font-medium hover:text-slate-900 transition-colors flex items-center justify-center gap-2">
-            View Candidate Dashboard <ChevronRight className="w-4 h-4" />
-          </a>
+        <div className="text-center mt-12 pb-20">
+          <Link 
+            href="/dashboard" 
+            className="text-slate-400 font-semibold hover:text-blue-600 transition-all flex items-center justify-center gap-2 group text-sm uppercase tracking-widest"
+          >
+            Access Applicant Dashboard 
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
     </main>
