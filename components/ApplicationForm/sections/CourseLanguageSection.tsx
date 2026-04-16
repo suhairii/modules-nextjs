@@ -7,89 +7,75 @@ export const CourseLanguageSection = () => {
   const { fields: courses, append: appendCourse, remove: removeCourse } = useFieldArray({ control, name: "courses" });
   const { fields: languages, append: appendLang, remove: removeLang } = useFieldArray({ control, name: "languages" });
 
-  const inputClass = "w-full p-2.5 border-2 border-slate-300 rounded text-sm text-black font-bold focus:ring-2 focus:ring-black outline-none bg-white placeholder:text-slate-400";
-  const headerClass = "text-[10px] font-black text-black bg-slate-100 p-2.5 border-2 border-slate-300 uppercase tracking-widest";
-  const cellClass = "p-2 border-2 border-slate-200 bg-white";
+  const inputClass = "w-full px-3 py-1.5 border border-slate-200 rounded-md text-[13px] text-slate-900 focus:ring-1 focus:ring-blue-500 outline-none transition-all hover:bg-slate-50";
+  const labelClass = "text-[11px] font-semibold text-slate-500 mb-1 block uppercase tracking-tight";
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-500">
+    <div className="space-y-12">
       {/* COURSES */}
       <div className="space-y-6">
-        <div className="flex items-center justify-between border-b-4 border-black pb-2">
-          <h2 className="text-2xl font-black text-black uppercase tracking-tighter italic">D. KURSUS / Courses</h2>
-          {courses.length < 5 && (
-            <button type="button" onClick={() => appendCourse({ topic: "", duration: "", year: "", organizer: "", location: "", financedBy: "" })} className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2 text-xs font-black hover:bg-slate-800 transition-all shadow-md">
-              <Plus className="w-4 h-4" /> TAMBAH / ADD
-            </button>
-          )}
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-semibold text-slate-900">Courses</h2>
+          <button type="button" onClick={() => appendCourse({ topic: "", duration: "", year: "", organizer: "", location: "", financedBy: "" })} className="text-blue-600 flex items-center gap-1 text-[13px] font-medium hover:underline">
+            <Plus className="w-3.5 h-3.5" /> Add Course
+          </button>
         </div>
-        <div className="overflow-x-auto rounded-lg border-2 border-slate-200 shadow-sm">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className={headerClass}>Topik / Topic</th>
-                <th className={headerClass}>Lama / Duration</th>
-                <th className={headerClass}>Tahun / Year</th>
-                <th className={headerClass}>Penyelenggara / Organizer</th>
-                <th className={headerClass}>Lokasi / Location</th>
-                <th className={headerClass}>Dibiayai / Financed By</th>
-                <th className={headerClass + " w-10"}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.map((field, index) => (
-                <tr key={field.id}>
-                  <td className={cellClass}><input {...register(`courses.${index}.topic`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`courses.${index}.duration`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`courses.${index}.year`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`courses.${index}.organizer`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`courses.${index}.location`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`courses.${index}.financedBy`)} className={inputClass} /></td>
-                  <td className={cellClass + " text-center"}>
-                    <button type="button" onClick={() => removeCourse(index)} className="text-red-600 p-2 hover:bg-red-50 rounded-full transition-colors"><Trash2 className="w-5 h-5" /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {courses.map((field, index) => (
+            <div key={field.id} className="p-5 border border-slate-100 rounded-xl relative group bg-white shadow-sm">
+              <button type="button" onClick={() => removeCourse(index)} className="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className={labelClass}>Topic / Topik</label>
+                  <input {...register(`courses.${index}.topic`)} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Duration / Lama</label>
+                  <input {...register(`courses.${index}.duration`)} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Year / Tahun</label>
+                  <input {...register(`courses.${index}.year`)} className={inputClass} />
+                </div>
+                <div className="col-span-2">
+                  <label className={labelClass}>Organizer / Penyelenggara</label>
+                  <input {...register(`courses.${index}.organizer`)} className={inputClass} />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* LANGUAGES */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between border-b-4 border-black pb-2">
-          <h2 className="text-2xl font-black text-black uppercase tracking-tighter italic">E. BAHASA ASING / Foreign Languages</h2>
-          {languages.length < 4 && (
-            <button type="button" onClick={() => appendLang({ language: "", read: "", speak: "", write: "" })} className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2 text-xs font-black hover:bg-slate-800 transition-all shadow-md">
-              <Plus className="w-4 h-4" /> TAMBAH / ADD
-            </button>
-          )}
+      <div className="space-y-6 pt-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-semibold text-slate-900">Foreign Languages</h2>
+          <button type="button" onClick={() => appendLang({ language: "", read: "", speak: "", write: "" })} className="text-blue-600 flex items-center gap-1 text-[13px] font-medium hover:underline">
+            <Plus className="w-3.5 h-3.5" /> Add Language
+          </button>
         </div>
-        <div className="overflow-x-auto rounded-lg border-2 border-slate-200 shadow-sm">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className={headerClass}>Bahasa / Language</th>
-                <th className={headerClass}>Membaca / Read</th>
-                <th className={headerClass}>Bicara / Speak</th>
-                <th className={headerClass}>Menulis / Write</th>
-                <th className={headerClass + " w-10"}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {languages.map((field, index) => (
-                <tr key={field.id}>
-                  <td className={cellClass}><input {...register(`languages.${index}.language`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`languages.${index}.read`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`languages.${index}.speak`)} className={inputClass} /></td>
-                  <td className={cellClass}><input {...register(`languages.${index}.write`)} className={inputClass} /></td>
-                  <td className={cellClass + " text-center"}>
-                    <button type="button" onClick={() => removeLang(index)} className="text-red-600 p-2 hover:bg-red-50 rounded-full transition-colors"><Trash2 className="w-5 h-5" /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {languages.map((field, index) => (
+            <div key={field.id} className="p-5 border border-slate-100 rounded-xl relative bg-white shadow-sm">
+              <button type="button" onClick={() => removeLang(index)} className="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>Language / Bahasa</label>
+                  <input {...register(`languages.${index}.language`)} className={inputClass} />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div><label className={labelClass}>Read</label><input {...register(`languages.${index}.read`)} className={inputClass} /></div>
+                  <div><label className={labelClass}>Speak</label><input {...register(`languages.${index}.speak`)} className={inputClass} /></div>
+                  <div><label className={labelClass}>Write</label><input {...register(`languages.${index}.write`)} className={inputClass} /></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
