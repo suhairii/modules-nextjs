@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Save } from "lucide-react";
 import { ApplicationFormSchema, ApplicationFormData } from "@/lib/schema";
 import { FIELD_LABELS, STEPS_METADATA as STEPS } from "@/lib/constants";
 
@@ -16,6 +17,7 @@ import { FinalSection } from "./sections/FinalSection";
 
 export default function ApplicationForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   const methods = useForm<ApplicationFormData>({
     resolver: zodResolver(ApplicationFormSchema),
@@ -32,7 +34,44 @@ export default function ApplicationForm() {
     },
   });
 
-  const { handleSubmit, trigger, reset, formState: { isSubmitting, errors } } = methods;
+  const { handleSubmit, trigger, reset, watch, formState: { isSubmitting, errors } } = methods;
+
+  // Watch for changes to auto-save to localStorage
+  const formData = watch();
+  useEffect(() => {
+    const saveToLocal = () => {
+      try {
+        localStorage.setItem("application_form_draft", JSON.stringify(formData));
+        localStorage.setItem("application_form_step", currentStep.toString());
+      } catch (e) {
+        console.error("Failed to save draft to local storage", e);
+      }
+    };
+    saveToLocal();
+  }, [formData, currentStep]);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem("application_form_draft");
+    const savedStep = localStorage.getItem("application_form_step");
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        reset(parsedData);
+        if (savedStep) setCurrentStep(parseInt(savedStep));
+      } catch (e) {
+        console.error("Failed to load draft from local storage", e);
+      }
+    }
+  }, [reset]);
+
+  const saveProgressManual = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      alert("Draft saved successfully to your browser!");
+    }, 500);
+  };
 
   const fillDummyData = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -106,6 +145,8 @@ export default function ApplicationForm() {
       const responseData = await response.json();
 
       if (response.ok) {
+        localStorage.removeItem("application_form_draft");
+        localStorage.removeItem("application_form_step");
         alert("SUCCESS: Application Submitted!");
         window.location.href = "/dashboard";
       } else {
@@ -126,7 +167,11 @@ export default function ApplicationForm() {
               Step {currentStep + 1} of {STEPS.length}: {STEPS[currentStep].title}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-3">
+            <button type="button" onClick={saveProgressManual} className="px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-[10px] font-bold uppercase hover:bg-blue-100 transition-all shadow-sm flex items-center gap-2">
+              <Save className="w-3 h-3" />
+              {isSaving ? "Saving..." : "Save Draft"}
+            </button>
             <button type="button" onClick={fillDummyData} className="px-3 py-1.5 bg-slate-50 text-slate-500 border border-slate-200 rounded-md text-[10px] font-bold uppercase hover:bg-slate-100 transition-all shadow-sm">
               Fill Dummy
             </button>
