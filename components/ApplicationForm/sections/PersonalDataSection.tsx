@@ -65,10 +65,12 @@ export const PersonalDataSection = () => {
           <div>
             <label className={labelClass}>Place of Birth</label>
             <input {...register("personalData.placeOfBirth")} className={inputClass} />
+            {errors.personalData?.placeOfBirth && <p className={errorClass}>{errors.personalData.placeOfBirth.message as string}</p>}
           </div>
           <div>
             <label className={labelClass}>Date of Birth</label>
             <input type="date" {...register("personalData.dateOfBirth")} className={inputClass} />
+            {errors.personalData?.dateOfBirth && <p className={errorClass}>{errors.personalData.dateOfBirth.message as string}</p>}
           </div>
         </div>
 
@@ -76,16 +78,19 @@ export const PersonalDataSection = () => {
           <div>
             <label className={labelClass}>KTP No</label>
             <input {...register("personalData.ktpNo")} className={inputClass} />
+            {errors.personalData?.ktpNo && <p className={errorClass}>{errors.personalData.ktpNo.message as string}</p>}
           </div>
           <div>
             <label className={labelClass}>KTP Valid Until</label>
             <input {...register("personalData.ktpValidUntil")} className={inputClass} placeholder="Lifetime" />
+            {errors.personalData?.ktpValidUntil && <p className={errorClass}>{errors.personalData.ktpValidUntil.message as string}</p>}
           </div>
         </div>
 
         <div>
           <label className={labelClass}>Email Address</label>
           <input type="email" {...register("personalData.email")} className={inputClass} />
+          {errors.personalData?.email && <p className={errorClass}>{errors.personalData.email.message as string}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -118,6 +123,7 @@ export const PersonalDataSection = () => {
         <div>
           <label className={labelClass}>Mobilephone Number</label>
           <input {...register("personalData.mobilePhone")} className={inputClass} />
+          {errors.personalData?.mobilePhone && <p className={errorClass}>{errors.personalData.mobilePhone.message as string}</p>}
         </div>
       </div>
 
@@ -125,11 +131,13 @@ export const PersonalDataSection = () => {
         <div>
           <label className={labelClass}>Current Address / Alamat Sekarang</label>
           <textarea {...register("personalData.currentAddress")} rows={3} className={inputClass} />
+          {errors.personalData?.currentAddress && <p className={errorClass}>{errors.personalData.currentAddress.message as string}</p>}
         </div>
 
         <div>
           <label className={labelClass}>Address in accordance with KTP / Alamat Sesuai KTP</label>
           <textarea {...register("personalData.ktpAddress")} rows={3} className={inputClass} />
+          {errors.personalData?.ktpAddress && <p className={errorClass}>{errors.personalData.ktpAddress.message as string}</p>}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { FORM_STATEMENTS, AVAILABILITY_OPTIONS } from "@/lib/constants";
 
 export const FinalSection = () => {
   const { register, formState: { errors } } = useFormContext();
@@ -8,19 +9,11 @@ export const FinalSection = () => {
   const labelClass = "text-[13px] font-medium text-slate-600 mb-1.5 block";
   const errorClass = "text-[11px] text-red-500 mt-1 font-medium";
 
-  const AVAILABILITY_OPTIONS = [
-    { value: "Immediately", label: "Immediately / Secepatnya" },
-    { value: "2 Weeks Notice", label: "2 Weeks Notice / 2 Minggu" },
-    { value: "1 Month Notice", label: "1 Month Notice / 1 Bulan" },
-    { value: "2 Months Notice", label: "2 Months Notice / 2 Bulan" },
-    { value: "Negotiable", label: "Negotiable / Bisa Dinegosiasikan" },
-  ];
-
   return (
     <div className="space-y-12">
       <div className="border-l-4 border-blue-600 pl-4">
-        <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-tight italic">Final Section & Declaration</h2>
-        <p className="text-sm text-slate-500 mt-1">Please provide your salary expectation and expected join date.</p>
+        <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-tight italic">{FORM_STATEMENTS.finalDeclaration.title}</h2>
+        <p className="text-sm text-slate-500 mt-1">{FORM_STATEMENTS.finalDeclaration.subtitle}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -61,9 +54,9 @@ export const FinalSection = () => {
             />
           </div>
           <label className="text-sm text-slate-700 leading-relaxed font-medium cursor-pointer select-none">
-            Dengan ini saya menyatakan bahwa informasi yang diberikan di atas adalah benar dan jika dalam keadaan apapun, ada keliru atau informasi palsu yang ditemukan, saya mengerti bahwa saya sepenuhnya akan bertanggung jawab. / 
+            {FORM_STATEMENTS.finalDeclaration.agreement.id} / 
             <span className="italic block mt-2 text-slate-500 font-normal">
-              I hereby certify that the information given above is true and if under any circumstances, there are any misrepresentation or fake information is found, I understand that I shall fully be held responsible.
+              {FORM_STATEMENTS.finalDeclaration.agreement.en}
             </span>
           </label>
         </div>

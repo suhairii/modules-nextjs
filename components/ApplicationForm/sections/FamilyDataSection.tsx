@@ -13,26 +13,43 @@ export const FamilyDataSection = () => {
 
   const inputClass = "w-full px-3 py-1.5 border border-slate-200 rounded-md text-[13px] text-slate-900 focus:ring-1 focus:ring-blue-600 outline-none transition-all hover:bg-slate-50";
   const labelClass = "text-[11px] font-semibold text-slate-500 mb-1 block uppercase tracking-tight";
+  const errorClass = "text-[10px] text-red-500 mt-1 font-medium";
 
-  const FamilyMemberForm = ({ label, path }: { label: string; path: string }) => (
-    <div className="p-5 bg-white border border-slate-100 rounded-xl shadow-sm space-y-4 animate-in fade-in duration-300">
-      <h3 className="text-sm font-semibold text-slate-800">{label}</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label className={labelClass}>Name / Nama</label>
-          <input {...register(`${path}.name`)} className={inputClass} />
-        </div>
-        <div>
-          <label className={labelClass}>DOB / Tempat, Tgl Lahir</label>
-          <input {...register(`${path}.placeDateOfBirth`)} className={inputClass} />
-        </div>
-        <div>
-          <label className={labelClass}>Occupation / Pekerjaan</label>
-          <input {...register(`${path}.occupation`)} className={inputClass} />
+  const FamilyMemberForm = ({ label, path }: { label: string; path: string }) => {
+    const { formState: { errors } } = useFormContext();
+    
+    // Helper function to get error by path string
+    const getError = (path: string) => {
+      return path.split('.').reduce((obj, key) => obj?.[key], errors as any);
+    };
+
+    const nameError = getError(`${path}.name`);
+    const dobError = getError(`${path}.placeDateOfBirth`);
+    const occError = getError(`${path}.occupation`);
+
+    return (
+      <div className="p-5 bg-white border border-slate-100 rounded-xl shadow-sm space-y-4 animate-in fade-in duration-300">
+        <h3 className="text-sm font-semibold text-slate-800">{label}</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className={labelClass}>Name / Nama</label>
+            <input {...register(`${path}.name`)} className={inputClass} />
+            {nameError && <p className={errorClass}>{nameError.message}</p>}
+          </div>
+          <div>
+            <label className={labelClass}>DOB / Tempat, Tgl Lahir</label>
+            <input {...register(`${path}.placeDateOfBirth`)} className={inputClass} />
+            {dobError && <p className={errorClass}>{dobError.message}</p>}
+          </div>
+          <div>
+            <label className={labelClass}>Occupation / Pekerjaan</label>
+            <input {...register(`${path}.occupation`)} className={inputClass} />
+            {occError && <p className={errorClass}>{occError.message}</p>}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="space-y-10">
